@@ -1,0 +1,163 @@
+<mat-card>
+    <mat-card-content>
+        <h2>Candidatos</h2>
+    </mat-card-content>
+</mat-card>
+<mat-card class="mt-3">
+    <mat-card-header class="pt-1 spacer d-flex">
+        <h2 class="text-start w-100">Escoge una elección:</h2>
+    </mat-card-header>
+    <form [formGroup]="Vote">
+        <mat-card-content class="d-flex flex-wrap">
+            <div cFormFloating class="w-100 me-auto">
+                <select cSelect id="floatingSelect" formControlName="titulo">
+                    @for (option of _fireSrv.Options; track $index) {
+                    <option [value]="option.titulo">{{option.titulo}}</option>
+                    }
+                </select>
+                <label cLabel for="floatingSelect">Elecciones:</label>
+            </div>
+            <div class="w-100 d-flex justify-content-end">
+                <button cButton color="success" class="pt-1 pb-1 mt-1 btn-add" (click)="obtenerCandidatos()"><i
+                        class="fa-solid fa-magnifying-glass"></i> Consultar</button>
+            </div>
+        </mat-card-content>
+    </form>
+</mat-card>
+<mat-card class="mt-3">
+    <mat-card-header class="pt-1 pb-1 spacer d-flex flex-wrap">
+        <div class="me-auto">
+            <h2 class="text-start">Lista de Candidatos de: {{titulo}}</h2>
+        </div>
+        <div class="d-flex justify-content-center">
+            <button cButton color="success" class="pt-1 pb-1 mt-1 btn-add"
+                (click)="visibleForm = true; visibleFormUpdate = false; candidato.reset()" [disabled]="!data"><i
+                    class="fa-sharp fa-solid fa-plus"></i> Candidato</button>
+        </div>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-card *ngIf="visibleForm || visibleFormUpdate" class="mt-2">
+            <mat-card-content class="d-flex justify-content-center row" style="overflow: auto;">
+                <h3 *ngIf="visibleForm">Nuevo Candidato:</h3>
+                <h3 *ngIf="visibleFormUpdate">Editar Candidato: </h3>
+
+                <mat-card class="mb-2 d-flex justify-content-center" style="width: max-content; max-width: 500px;">
+                    <mat-card-content class="d-flex flex-wrap justify-content-center">
+                        <img [src]="preImg" class="rounded-circle m-2" width="100px"
+                            alt="Foto Candidato">
+                        <div style="max-width: 380px; margin-top: 10px;">
+                            <p>Candidato: {{candidato.value.nombre}}</p>
+                            <p>Mensaje: {{candidato.value.mensaje}}</p>
+                            <p>Estado: {{candidato.value.estado}}</p>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+                
+                <div class="col-12">
+                    <form [formGroup]="candidato">
+                        <div [cFormFloating]="true" class="mb-3" *ngIf="!visibleFormUpdate">
+                            <input cFormControl placeholder="Numero de documento del nuevo candidato..." type="number"
+                                formControlName="numDoc" (change)="ConsultarCandidato()"/>
+                            <label cLabel>Numero de Documento:*</label>
+                        </div>
+                        <div [cFormFloating]="true" class="mb-3" *ngIf="candidato.value.numDoc && !visibleFormUpdate">
+                            <input cFormControl placeholder="Nombre completo del candidato..." type="text"
+                                formControlName="nombre"/>
+                            <label cLabel>Nombre Completo:*</label>
+                        </div>
+                        <div [cFormFloating]="true" class="mb-3" *ngIf="candidato.value.numDoc">
+                            <input cFormControl placeholder="Mensaje del candidato, para los votantes..." type="text"
+                                formControlName="mensaje" />
+                            <label cLabel>Mensaje:*</label>
+                        </div>
+                        <div cFormFloating *ngIf="candidato.value.numDoc"> 
+                            <select cSelect id="floatingSelect" formControlName="estado">
+                                <option value="Activo">Activo</option>
+                                <option value="No Activo">No Activo</option>
+                            </select>
+                            <label cLabel for="floatingSelect">Estado:</label>
+                        </div>
+                        <div class="mt-2 d-flex justify-content-center" *ngIf="candidato.value.numDoc">
+                            <input id="inputFile" (change)="captureImg($event)" type="file" accept="image/*"
+                                style="display: none;">
+                            <button mat-stroked-button color="primary" type="file"
+                                Onclick="document.getElementById('inputFile').click();" [disabled]="candidato.invalid || visibleFormUpdate">Adjutar
+                                Imagen<mat-icon>perm_media</mat-icon></button>
+                        </div>
+                        <div class="d-flex justify-content-end mt-2">
+                            <button cButton color="primary" *ngIf="visibleForm" (click)="guardarImg()"
+                                [disabled]="candidato.invalid">Agregar</button>
+                            <button cButton color="primary" *ngIf="visibleFormUpdate"
+                                (click)="actualizarCandidato()">Actualizar</button>
+                            <button cButton color="danger" (click)="visibleForm = false; visibleFormUpdate = false"
+                                class="ms-1">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </mat-card-content>
+        </mat-card>
+        <div class="mat-elevation-z8 mt-3" style="overflow: auto;">
+            <table mat-table [dataSource]="dataSource">
+
+                <!--- Note that these columns can be defined in any order.
+                      The actual rendered columns are set as a property on the row definition" -->
+
+
+                <!-- municipio Column -->
+                <ng-container matColumnDef="Foto">
+                    <th mat-header-cell *matHeaderCellDef> Foto </th>
+                    <td mat-cell *matCellDef="let element"> <img [src]="element.fotoPath" [alt]="element.nombre"
+                            width="40px" class="img-fluid rounded-circle"> </td>
+                </ng-container>
+
+                <!-- institucion Column -->
+                <ng-container matColumnDef="NombreCompleto">
+                    <th mat-header-cell *matHeaderCellDef> Nombre Completo </th>
+                    <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+                </ng-container>
+
+                <!-- fecha Reporte Column -->
+                <ng-container matColumnDef="Mensaje">
+                    <th mat-header-cell *matHeaderCellDef> Mensaje </th>
+                    <td mat-cell *matCellDef="let element">{{element.mensaje}}</td>
+                </ng-container>
+
+                <!-- sede Column -->
+ <!--               <ng-container matColumnDef="FechaRegistro">
+                    <th mat-header-cell *matHeaderCellDef> Fecha de registro </th>
+                    <td mat-cell *matCellDef="let element"> {{element.fechaRegistro | date: 'short'}} </td>
+                </ng-container> -->
+
+                <!-- Jornada Column -->
+                <ng-container matColumnDef="Estado">
+                    <th mat-header-cell *matHeaderCellDef> Estado </th>
+                    <td mat-cell *matCellDef="let element" > {{element.estado}} </td>
+                </ng-container>
+
+                <!-- Reporte Column -->
+                <ng-container matColumnDef="RegistradoPor">
+                    <th mat-header-cell *matHeaderCellDef> Registrado por </th>
+                    <td mat-cell *matCellDef="let element">{{element.registradoPor}}</td>
+                </ng-container>
+
+                <!-- Reporte Column -->
+                <ng-container matColumnDef="Editar">
+                    <th mat-header-cell *matHeaderCellDef> Editar </th>
+                    <td mat-cell *matCellDef="let element"><button cButton color="info" variant="outline"
+                            (click)="viewForm(element)"><i class="fa-regular fa-pen-to-square"></i></button></td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns" class="bg-table-header"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                <!-- Row shown when there is no matching data. -->
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell" colspan="4">No se encontraron datos</td>
+                </tr>
+            </table>
+            <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+                aria-label="Select page of periodic elements">
+            </mat-paginator>
+        </div>
+    </mat-card-content>
+</mat-card>

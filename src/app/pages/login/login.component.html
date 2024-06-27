@@ -1,0 +1,45 @@
+<div class="fondo">
+    <div style="height: 100px;">
+
+    </div>
+    <mat-card class="card-size row">
+        <mat-card-header class="flex justify-content-center">
+            <img src="../../../assets/logo.png" alt="logo" class="img-fluid w-50">
+        </mat-card-header>
+        <mat-card-content class="d-flex justify-content-center flex-column text-center">
+            <h3 class="text-start" style="margin-bottom: 0;"><b>Log In</b></h3>
+            <h3 class="text-start">Por favor ingresa tus datos:</h3>
+            <form [formGroup]="formLogin" (ngSubmit)="login()">
+                <mat-form-field class="example-form">
+                    <mat-label>Correo Electronico: </mat-label>
+                    <input type="email" matInput placeholder="Ingrese su correo.." formControlName="correo">
+                    <mat-error>Correo no valido</mat-error>
+                </mat-form-field>
+                <mat-form-field class="example-form">
+                    <mat-label>Ingresa una contraseña: </mat-label>
+                    <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
+                    <mat-error>Contraseña invalida (6 caracteres minimos)</mat-error>
+                    <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                        [attr.aria-pressed]="hide">
+                        <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                    </button>
+                </mat-form-field>
+                <div class="d-flex justify-content-center">
+                    <button mat-raised-button color="primary" type="submit"
+                        [disabled]="!formLogin.valid">Ingresar</button>
+                </div>
+            </form>
+            <h1>{{errorLogin}}</h1>
+        </mat-card-content>
+    </mat-card>
+    <div class="foot">
+        <c-footer class="d-flex justify-content-between">
+            <div>
+                <span>Angular &copy; 2024</span>
+            </div>
+            <div class="ms-auto">
+                <span>Powered by: Ing. Maicol Aponte</span>
+            </div>
+        </c-footer>
+    </div>
+</div>

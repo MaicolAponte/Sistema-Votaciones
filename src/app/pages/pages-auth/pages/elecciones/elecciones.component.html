@@ -1,0 +1,118 @@
+<mat-card>
+    <mat-card-content>
+        <h2>Elecciones</h2>
+    </mat-card-content>
+</mat-card>
+<mat-card class="mt-3">
+    <mat-card-header class="pt-1 spacer d-flex">
+        <h2 class="text-start w-100">Lista de Elecciones:</h2>
+        <button cButton color="success" class="pt-1 pb-1 mt-1 btn-add flex-shrink-0" (click)="visibleForm = true; visibleFormUpdate = false; newVote.reset()"><i
+                class="fa-sharp fa-solid fa-plus"></i> Elección</button>
+    </mat-card-header>
+    <mat-card-content>
+        <div *ngIf="visibleForm || visibleFormUpdate" class="mt-2">
+            <mat-card>
+                <mat-card-content>
+                    <h3 *ngIf="visibleForm">Nueva Elección:</h3>
+                    <h3 *ngIf="visibleFormUpdate">Editar Elección: </h3>
+                    <form [formGroup]="newVote">
+                        <div [cFormFloating]="true" class="mb-3">
+                            <input cFormControl placeholder="Título de la nueva votación..." type="text" formControlName="titulo"/>
+                            <label cLabel>Título Elección:*</label>
+                          </div>
+                          <div [cFormFloating]="true" class="mb-3">
+                            <input cFormControl placeholder="Descripción de la elección..." type="text" formControlName="descripcion"/>
+                            <label cLabel>Descripción:*</label>
+                          </div>
+                          <div cFormFloating class="mb-3">
+                            <select cSelect id="floatingSelect"formControlName="estado">
+                              <option value="Activo">Activo</option>
+                              <option value="No Activo">No Activo</option>
+                            </select>
+                            <label cLabel for="floatingSelect">Estado:</label>
+                          </div>
+                          <div cFormFloating>
+                            <select cSelect id="floatingSelect"formControlName="formato">
+                              <option value="Abierto">Abierto</option>
+                              <option value="Cerrado">Cerrado</option>
+                            </select>
+                            <label cLabel for="floatingSelect">Formato:</label>
+                          </div>
+                          <div class="d-flex justify-content-end mt-2">
+                            <button cButton color="primary" *ngIf="visibleForm" (click)="createVote()">Crear</button>
+                            <button cButton color="primary" *ngIf="visibleFormUpdate" (click)="updateVote()">Actualizar</button>
+                            <button cButton color="danger" (click)="visibleForm = false; visibleFormUpdate = false" class="ms-1">Cancelar</button>
+                          </div>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <div class="mat-elevation-z8 mt-3" style="overflow: auto;">
+            <table mat-table [dataSource]="dataSource">
+
+                <!--- Note that these columns can be defined in any order.
+                      The actual rendered columns are set as a property on the row definition" -->
+
+
+                <!-- municipio Column -->
+                <ng-container matColumnDef="TituloEleccion">
+                    <th mat-header-cell *matHeaderCellDef> Título </th>
+                    <td mat-cell *matCellDef="let element"> {{element.titulo}} </td>
+                </ng-container>
+
+                <!-- institucion Column -->
+                <ng-container matColumnDef="Descripcion">
+                    <th mat-header-cell *matHeaderCellDef> Descripción </th>
+                    <td mat-cell *matCellDef="let element"> {{element.descripcion}} </td>
+                </ng-container>
+
+                <!-- fecha Reporte Column -->
+                <ng-container matColumnDef="FechaCreacion">
+                    <th mat-header-cell *matHeaderCellDef> Fecha Creación </th>
+                    <td mat-cell *matCellDef="let element">{{element.fechaCreacion | date: 'short'}}</td>
+                </ng-container>
+
+                <!-- sede Column -->
+                <ng-container matColumnDef="Estado">
+                    <th mat-header-cell *matHeaderCellDef> Estado </th>
+                    <td mat-cell *matCellDef="let element"> {{element.estado}} </td>
+                </ng-container>
+
+                <!-- sede Column -->
+                <ng-container matColumnDef="Formato">
+                    <th mat-header-cell *matHeaderCellDef> Formato </th>
+                    <td mat-cell *matCellDef="let element"> {{element.formato}} </td>
+                </ng-container>
+
+                <!-- Jornada Column -->
+                <ng-container matColumnDef="Creador">
+                    <th mat-header-cell *matHeaderCellDef> Creado Por </th>
+                    <td mat-cell *matCellDef="let element"> {{element.creador}} </td>
+                </ng-container>
+
+                <!-- Reporte Column -->
+                <ng-container matColumnDef="Editar">
+                    <th mat-header-cell *matHeaderCellDef> Editar </th>
+                    <td mat-cell *matCellDef="let element"><button cButton color="info" variant="outline" (click)="viewForm(element)"><i class="fa-regular fa-pen-to-square"></i></button></td>
+                </ng-container>
+
+                <!-- Reporte Column -->
+                <ng-container matColumnDef="VerLink">
+                    <th mat-header-cell *matHeaderCellDef> Link </th>
+                    <td mat-cell *matCellDef="let element"><button cButton color="success" variant="outline"><i class="fa-solid fa-link"></i></button></td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns" class="bg-table-header"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                <!-- Row shown when there is no matching data. -->
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell" colspan="4">No se encontraron datos</td>
+                </tr>
+            </table>
+            <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+                aria-label="Select page of periodic elements">
+            </mat-paginator>
+        </div>
+    </mat-card-content>
+</mat-card>

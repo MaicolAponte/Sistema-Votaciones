@@ -1,0 +1,12 @@
+.spacer {
+    background-color: #263238; 
+    color:white;
+}
+
+.btn-add{
+    height: 30px;
+}
+
+p{
+    word-wrap: break-word;
+}
